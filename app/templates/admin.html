@@ -1,0 +1,1103 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Free Recruitment Market</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: #667eea;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9ff;
+        }
+        
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .required {
+            color: red;
+        }
+        
+        .home-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Admin Login Modal */
+        .admin-login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        
+        .admin-login-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .admin-password-input {
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .admin-login-btn {
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .admin-error {
+            color: #ef4444;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .admin-error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Login Modal -->
+    <div id="adminLoginOverlay" class="admin-login-overlay">
+        <div class="admin-login-modal">
+            <h2>🔒 Admin Access</h2>
+            <p>Enter the admin password to continue</p>
+            <form id="adminLoginForm" class="admin-login-form">
+                <input 
+                    type="password" 
+                    id="adminPassword" 
+                    class="admin-password-input" 
+                    placeholder="Enter admin password"
+                    required
+                    autocomplete="off"
+                >
+                <button type="submit" class="admin-login-btn">
+                    Unlock Admin Panel
+                </button>
+                <div id="adminError" class="admin-error">
+                    ❌ Invalid password. Please try again.
+                </div>
+            </form>
+            <p style="margin-top: 20px; font-size: 14px;">
+                <a href="index.html" style="color: #667eea;">← Back to Home</a>
+            </p>
+        </div>
+    </div>
+    <div class="header">
+        <h1>🎯 Free Recruitment Market</h1>
+        <p>Freelancer & Evaluator Management System</p>
+    </div>
+    
+    <div class="container">
+        <a href="/" class="home-link">← Back to Home</a>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Freelancers</h3>
+                <div class="value" id="totalFreelancers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Evaluators</h3>
+                <div class="value" id="totalEvaluators">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Reviews</h3>
+                <div class="value" id="totalRatings">0</div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('freelancers')">Freelancers</button>
+            <button class="tab" onclick="switchTab('evaluators')">Evaluators</button>
+            <button class="tab" onclick="switchTab('evaluations')">Evaluations</button>
+        </div>
+        
+        <!-- Freelancers Tab -->
+        <div id="freelancers" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Freelancers Management</h2>
+                    <button class="btn btn-primary" onclick="openAddFreelancerModal()">+ Add Freelancer</button>
+                </div>
+                <div id="freelancersTable">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Evaluators Tab -->
+        <div id="evaluators" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Evaluators Management</h2>
+                    <button class="btn btn-primary" onclick="openAddEvaluatorModal()">+ Register Evaluator</button>
+                </div>
+                <div id="evaluatorsTable">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Evaluations Tab -->
+        <div id="evaluations" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">All Evaluations</h2>
+                    <button class="btn btn-primary" onclick="openAddRatingModal()">+ Submit Evaluation</button>
+                </div>
+                <div id="evaluationsTable">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Freelancer Modal -->
+    <div id="freelancerModal" class="modal">
+        <div class="modal-content">
+            <h2 id="freelancerModalTitle">Add Freelancer</h2>
+            <form id="freelancerForm">
+                <div class="form-group">
+                    <label>Name <span class="required">*</span></label>
+                    <input type="text" id="freelancerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" id="freelancerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <input type="password" id="freelancerPassword" required minlength="6" placeholder="Minimum 6 characters">
+                    <small style="color: #666;">Password for freelancer sign-in</small>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" id="freelancerPhone">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="freelancerLocation">
+                </div>
+                <div class="form-group">
+                    <label>Job Type</label>
+                    <input type="text" id="freelancerJobType">
+                </div>
+                <div class="form-group">
+                    <label>Skills</label>
+                    <input type="text" id="freelancerSkills">
+                </div>
+                <div class="form-group">
+                    <label>About Me</label>
+                    <textarea id="freelancerAbout"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Work Experience</label>
+                    <textarea id="freelancerExperience"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Availability</label>
+                    <select id="freelancerAvailability">
+                        <option value="available">Available</option>
+                        <option value="busy">Busy</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Profile Picture URL</label>
+                    <input type="url" id="freelancerPicture">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeFreelancerModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Evaluator Modal -->
+    <div id="evaluatorModal" class="modal">
+        <div class="modal-content">
+            <h2>Register Evaluator</h2>
+            <form id="evaluatorForm">
+                <div class="form-group">
+                    <label>Name <span class="required">*</span></label>
+                    <input type="text" id="evaluatorName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" id="evaluatorEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <input type="password" id="evaluatorPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="evaluatorCompany">
+                </div>
+                <div class="form-group">
+                    <label>Position</label>
+                    <input type="text" id="evaluatorPosition">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEvaluatorModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <h2>Submit Evaluation</h2>
+            <form id="ratingForm">
+                <div class="form-group">
+                    <label>Freelancer <span class="required">*</span></label>
+                    <select id="ratingFreelancer" required>
+                        <option value="">Select Freelancer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Evaluator <span class="required">*</span></label>
+                    <select id="ratingEvaluator" required>
+                        <option value="">Select Evaluator</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rating <span class="required">*</span></label>
+                    <select id="ratingValue" required>
+                        <option value="">Select Rating</option>
+                        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ Very Good</option>
+                        <option value="3">⭐⭐⭐ Good</option>
+                        <option value="2">⭐⭐ Fair</option>
+                        <option value="1">⭐ Poor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Review</label>
+                    <textarea id="ratingReview" placeholder="Optional review text..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeRatingModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+            // Admin Password Protection
+        (function() {
+            const API_BASE = ''; // Update for production
+            const overlay = document.getElementById('adminLoginOverlay');
+            const form = document.getElementById('adminLoginForm');
+            const passwordInput = document.getElementById('adminPassword');
+            const errorDiv = document.getElementById('adminError');
+            
+            // Show login modal
+            overlay.style.display = 'flex';
+            passwordInput.focus();
+            
+            // Handle login
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorDiv.classList.remove('show');
+                
+                const password = passwordInput.value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/admin/verify`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ password: password })
+                    });
+                    
+                    if (response.ok) {
+                        overlay.style.display = 'none';
+                    } else {
+                        // Wrong password
+                        errorDiv.classList.add('show');
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                        
+                        // Shake animation
+                        form.style.animation = 'shake 0.5s';
+                        setTimeout(() => {
+                            form.style.animation = '';
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error verifying password:', error);
+                    errorDiv.textContent = '❌ Connection error. Please try again.';
+                    errorDiv.classList.add('show');
+                }
+            });
+        })();
+        
+        // Add shake animation to CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        let currentFreelancerId = null;
+        
+        // Load data on page load
+        window.onload = function() {
+            loadStats();
+            loadFreelancers();
+            loadEvaluators();
+            loadEvaluations();
+        };
+        
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the tab
+            if (tabName === 'freelancers') loadFreelancers();
+            if (tabName === 'evaluators') loadEvaluators();
+            if (tabName === 'evaluations') loadEvaluations();
+        }
+        
+        // Load statistics
+        async function loadStats() {
+            try {
+                const [freelancersRes, evaluatorsRes, evaluationsRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/freelancers`),
+                    fetch(`${API_BASE}/api/evaluators`),
+                    fetch(`${API_BASE}/api/evaluations`)
+                ]);
+                
+                const freelancers = await freelancersRes.json();
+                const evaluators = await evaluatorsRes.json();
+                const evaluations = await evaluationsRes.json();
+                
+                document.getElementById('totalFreelancers').textContent = freelancers.length;
+                document.getElementById('totalEvaluators').textContent = evaluators.length;
+                document.getElementById('totalRatings').textContent = evaluations.length;
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        // Load freelancers
+        async function loadFreelancers() {
+            const container = document.getElementById('freelancersTable');
+            container.innerHTML = '<div class="loading">Loading...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/freelancers`);
+                const freelancers = await response.json();
+                
+                if (freelancers.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No Freelancers registered yet</div>';
+                    return;
+                }
+                
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Job Type</th>
+                                <th>Rating</th>
+                                <th>Reviews</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                freelancers.forEach(f => {
+                    const ratingInfo = f.rating_info || { average: 0, total_reviews: 0 };
+                    html += `
+                        <tr>
+                            <td>${f.id}</td>
+                            <td>${f.name}</td>
+                            <td>${f.email}</td>
+                            <td>${f.location || 'N/A'}</td>
+                            <td>${f.job_type || 'N/A'}</td>
+                            <td>${'⭐'.repeat(Math.round(ratingInfo.average))} ${ratingInfo.average.toFixed(1)}</td>
+                            <td>${ratingInfo.total_reviews}</td>
+                            <td><span class="badge badge-available">${f.availability}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-secondary btn-small" onclick="editFreelancer(${f.id})">Edit</button>
+                                    <button class="btn btn-danger btn-small" onclick="deleteFreelancer(${f.id})">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading freelancers:', error);
+                container.innerHTML = '<div class="empty-state">Error loading data</div>';
+            }
+        }
+        
+        // Load evaluators
+        async function loadEvaluators() {
+            const container = document.getElementById('evaluatorsTable');
+            container.innerHTML = '<div class="loading">Loading...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/evaluators`);
+                const evaluators = await response.json();
+                
+                if (evaluators.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No evaluators registered yet</div>';
+                    return;
+                }
+                
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Position</th>
+                                <th>Evaluations</th>
+                                <th>Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                evaluators.forEach(e => {
+                    html += `
+                        <tr>
+                            <td>${e.id}</td>
+                            <td>${e.name}</td>
+                            <td>${e.email}</td>
+                            <td>${e.company || 'N/A'}</td>
+                            <td>${e.position || 'N/A'}</td>
+                            <td>${e.evaluation_count || 0}</td>
+                            <td>${new Date(e.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading evaluators:', error);
+                container.innerHTML = '<div class="empty-state">Error loading data</div>';
+            }
+        }
+        
+        // Load evaluations
+        async function loadEvaluations() {
+            const container = document.getElementById('evaluationsTable');
+            container.innerHTML = '<div class="loading">Loading...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/evaluations`);
+                const evaluations = await response.json();
+                
+                if (evaluations.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No evaluations submitted yet</div>';
+                    return;
+                }
+                
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Freelancer</th>
+                                <th>Evaluator</th>
+                                <th>Company</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                evaluations.forEach(e => {
+                    const jobSeekerName = e.job_seeker_name || 'Unknown';
+                    const evaluatorName = e.evaluator_name || 'Unknown';
+                    const rating = e.score || e.rating || 0;
+                    const reviewText = e.comment || e.review_text || '';
+                    const dateField = e.evaluation_date || e.created_at || '';
+                    
+                    html += `
+                        <tr>
+                            <td>${e.id}</td>
+                            <td>${jobSeekerName}</td>
+                            <td>${evaluatorName}</td>
+                            <td>${e.evaluator_company || 'N/A'}</td>
+                            <td>${'⭐'.repeat(Math.min(Math.max(rating, 0), 5))} (${rating})</td>
+                            <td>${reviewText ? reviewText.substring(0, 50) + '...' : 'No review'}</td>
+                            <td>${dateField ? new Date(dateField).toLocaleDateString() : 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading evaluations:', error);
+                container.innerHTML = '<div class="empty-state">Error loading data</div>';
+            }
+        }
+        
+        // Freelancer Modal Functions
+        function openAddFreelancerModal() {
+            currentFreelancerId = null;
+            document.getElementById('freelancerModalTitle').textContent = 'Add Freelancer';
+            document.getElementById('freelancerForm').reset();
+            document.getElementById('freelancerModal').classList.add('active');
+        }
+        
+        async function editFreelancer(id) {
+            currentFreelancerId = id;
+            document.getElementById('freelancerModalTitle').textContent = 'Edit Freelancer';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/freelancers/${id}`);
+                const freelancer = await response.json();
+                
+                document.getElementById('freelancerName').value = freelancer.name;
+                document.getElementById('freelancerEmail').value = freelancer.email;
+                document.getElementById('freelancerPhone').value = freelancer.phone || '';
+                document.getElementById('freelancerLocation').value = freelancer.location || '';
+                document.getElementById('freelancerJobType').value = freelancer.job_type || '';
+                document.getElementById('freelancerSkills').value = freelancer.skills || '';
+                document.getElementById('freelancerAbout').value = freelancer.about_me || '';
+                document.getElementById('freelancerExperience').value = freelancer.work_experience || '';
+                document.getElementById('freelancerAvailability').value = freelancer.availability;
+                document.getElementById('freelancerPicture').value = freelancer.profile_picture || '';
+                
+                document.getElementById('freelancerModal').classList.add('active');
+            } catch (error) {
+                console.error('Error loading freelancer:', error);
+                alert('Error loading Freelancer data');
+            }
+        }
+        
+        function closeFreelancerModal() {
+            document.getElementById('freelancerModal').classList.remove('active');
+            currentFreelancerId = null;
+        }
+        
+        document.getElementById('freelancerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('freelancerName').value,
+                email: document.getElementById('freelancerEmail').value,
+                phone: document.getElementById('freelancerPhone').value || null,
+                password: document.getElementById('freelancerPassword').value,
+                location: document.getElementById('freelancerLocation').value || null,
+                job_type: document.getElementById('freelancerJobType').value || null,
+                skills: document.getElementById('freelancerSkills').value || null,
+                about_me: document.getElementById('freelancerAbout').value || null,
+                work_experience: document.getElementById('freelancerExperience').value || null,
+                availability: document.getElementById('freelancerAvailability').value,
+                profile_picture: document.getElementById('freelancerPicture').value || null
+            };
+            
+            try {
+                let response;
+                if (currentFreelancerId) {
+                    // Update existing
+                    response = await fetch(`${API_BASE}/api/freelancers/${currentFreelancerId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Create new
+                    response = await fetch(`${API_BASE}/api/freelancers`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                }
+                
+                if (response.ok) {
+                    closeFreelancerModal();
+                    loadFreelancers();
+                    loadStats();
+                    alert('Freelancer saved successfully!');
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Error saving Freelancer');
+                }
+            } catch (error) {
+                console.error('Error saving freelancer:', error);
+                alert('Network error');
+            }
+        });
+        
+        async function deleteFreelancer(id) {
+            if (!confirm('Are you sure you want to delete this Freelancer? This will also delete all their ratings.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/freelancers/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadFreelancers();
+                    loadStats();
+                    alert('Freelancer deleted successfully!');
+                } else {
+                    alert('Error deleting Freelancer');
+                }
+            } catch (error) {
+                console.error('Error deleting freelancer:', error);
+                alert('Network error');
+            }
+        }
+        
+        // Evaluator Modal Functions
+        function openAddEvaluatorModal() {
+            document.getElementById('evaluatorForm').reset();
+            document.getElementById('evaluatorModal').classList.add('active');
+        }
+        
+        function closeEvaluatorModal() {
+            document.getElementById('evaluatorModal').classList.remove('active');
+        }
+        
+        document.getElementById('evaluatorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('evaluatorName').value,
+                email: document.getElementById('evaluatorEmail').value,
+                password: document.getElementById('evaluatorPassword').value,
+                company: document.getElementById('evaluatorCompany').value || null,
+                position: document.getElementById('evaluatorPosition').value || null
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/evaluators`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    closeEvaluatorModal();
+                    loadEvaluators();
+                    loadStats();
+                    alert('Evaluator registered successfully!');
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Error registering evaluator');
+                }
+            } catch (error) {
+                console.error('Error registering evaluator:', error);
+                alert('Network error');
+            }
+        });
+        
+        // Rating Modal Functions
+        async function openAddRatingModal() {
+            document.getElementById('ratingForm').reset();
+            
+            // Load freelancers and evaluators for dropdowns
+            try {
+                const [freelancersRes, evaluatorsRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/freelancers`),
+                    fetch(`${API_BASE}/api/evaluators`)
+                ]);
+                
+                const freelancers = await freelancersRes.json();
+                const evaluators = await evaluatorsRes.json();
+                
+                // Populate freelancers dropdown
+                const freelancerSelect = document.getElementById('ratingFreelancer');
+                freelancerSelect.innerHTML = '<option value="">Select Freelancer</option>';
+                freelancers.forEach(f => {
+                    freelancerSelect.innerHTML += `<option value="${f.id}">${f.name} (${f.email})</option>`;
+                });
+                
+                // Populate evaluators dropdown
+                const evaluatorSelect = document.getElementById('ratingEvaluator');
+                evaluatorSelect.innerHTML = '<option value="">Select Evaluator</option>';
+                evaluators.forEach(e => {
+                    evaluatorSelect.innerHTML += `<option value="${e.id}">${e.name} (${e.email})</option>`;
+                });
+                
+                document.getElementById('ratingModal').classList.add('active');
+            } catch (error) {
+                console.error('Error loading data for rating form:', error);
+                alert('Error loading data');
+            }
+        }
+        
+        function closeRatingModal() {
+            document.getElementById('ratingModal').classList.remove('active');
+        }
+        
+        document.getElementById('ratingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                freelancer_id: parseInt(document.getElementById('ratingFreelancer').value),
+                evaluator_id: parseInt(document.getElementById('ratingEvaluator').value),
+                rating: parseInt(document.getElementById('ratingValue').value),
+                review_text: document.getElementById('ratingReview').value || null
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/ratings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    closeRatingModal();
+                    loadEvaluations();
+                    loadFreelancers(); // Refresh to show updated ratings
+                    loadStats();
+                    alert('Evaluation submitted successfully!');
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Error submitting evaluation');
+                }
+            } catch (error) {
+                console.error('Error submitting rating:', error);
+                alert('Network error');
+            }
+        });
+    </script>
+</body>
+</html>

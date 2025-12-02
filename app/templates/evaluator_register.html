@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Registration - Job Market</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 30px;
+            font-size: 16px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+        
+        .back-button:hover {
+            opacity: 1;
+        }
+        
+        .back-button:before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .form-header h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+        
+        .submit-button:active {
+            transform: translateY(0);
+        }
+        
+        .form-help {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .next-steps {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+        
+        .next-steps h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .next-steps ul {
+            list-style: none;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .next-steps li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 30px 20px;
+            }
+            
+            .form-header h1 {
+                font-size: 24px;
+            }
+        }
+        
+        .success-message {
+            display: none;
+            background: #10b981;
+            color: white;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .error-message {
+            display: none;
+            background: #ef4444;
+            color: white;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">Back to Home</a>
+        
+        <div class="form-card">
+            <div class="form-header">
+                <h1>Employer Registration</h1>
+                <p>Register your company account to rate and recommend excellent candidates</p>
+            </div>
+            
+            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+            
+            <form id="evaluatorForm">
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="Your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="company@email.com">
+                    <div class="form-help">Will be used for login and notifications</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" required minlength="6" placeholder="At least 6 characters">
+                    <div class="form-help">Please set a secure password</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Company Name</label>
+                    <input type="text" id="company" name="company" placeholder="Your company name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Position</label>
+                    <input type="text" id="position" name="position" placeholder="e.g., HR Manager, Technical Director">
+                </div>
+                
+                <button type="submit" class="submit-button">Register and Start Rating</button>
+            </form>
+            
+            <div class="next-steps">
+                <h3>After registration you can:</h3>
+                <ul>
+                    <li>Browse all candidates in the Talent Market</li>
+                    <li>Rate and review candidates you've interviewed</li>
+                    <li>View other companies' reviews of candidates</li>
+                    <li>Help excellent talent get more opportunities</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    const API_BASE = '';
+    
+    document.getElementById('evaluatorForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            company: document.getElementById('company').value || null,
+            position: document.getElementById('position').value || null
+        };
+        
+        try {
+            const response = await fetch(`${API_BASE}/api/evaluators`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showMessage('success', `Registration successful! Welcome ${formData.name}, redirecting to Talent Market in 3 seconds...`);
+                document.getElementById('evaluatorForm').reset();
+                
+                // Save complete evaluator info to localStorage
+                localStorage.setItem('evaluatorId', result.evaluator_id);
+                localStorage.setItem('evaluatorName', formData.name);
+                localStorage.setItem('evaluatorEmail', formData.email);
+                localStorage.setItem('evaluatorCompany', formData.company || '');
+                
+                setTimeout(() => {
+                    window.location.href = 'talent_market.html';
+                }, 3000);
+            } else {
+                showMessage('error', result.detail || 'Registration failed, please try again');
+            }
+        } catch (error) {
+            showMessage('error', 'Network error, please check your connection');
+            console.error('Error:', error);
+        }
+    });
+    
+    function showMessage(type, text) {
+        const successMsg = document.getElementById('successMessage');
+        const errorMsg = document.getElementById('errorMessage');
+        
+        if (type === 'success') {
+            successMsg.textContent = text;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+        } else {
+            errorMsg.textContent = text;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>

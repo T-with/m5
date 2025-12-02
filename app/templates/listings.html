@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Listings - Talent Market</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-button {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .header-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info.active {
+            display: flex;
+        }
+
+        .user-info .user-name {
+            cursor: pointer;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .user-info .user-name:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .notification-icon {
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .sign-out-btn {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .sign-out-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .employer-only-notice {
+            background: #fff7ed;
+            border: 2px solid #fed7aa;
+            color: #9a3412;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input, .search-box select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus, .search-box select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-button, .clear-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-button {
+            background: #667eea;
+            color: white;
+        }
+
+        .search-button:hover {
+            background: #5568d3;
+        }
+
+        .clear-button {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .clear-button:hover {
+            background: #d1d5db;
+        }
+
+        .tags-section {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 20px;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 8px 15px;
+            background: #f1f5f9;
+            border: 2px solid #e0e0e0;
+            color: #64748b;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .tag.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .listing-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .listing-header {
+            margin-bottom: 20px;
+        }
+
+        .listing-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .listing-freelancer {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .listing-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .listing-pricing {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .base-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .addons-section {
+            margin-top: 15px;
+        }
+
+        .addons-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .addon-item-display {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .addon-price {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .listing-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .listing-tag {
+            padding: 5px 12px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #667eea;
+        }
+
+        /* Fixed button layout - Critical for preventing UI issues */
+        .listing-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 15px;
+        }
+
+        .book-btn, .message-btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            text-align: center;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .book-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .book-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .book-btn:disabled {
+            background: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .message-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .message-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            grid-column: 1 / -1;
+        }
+
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .no-results-text {
+            font-size: 20px;
+            color: #666;
+        }
+
+        /* Responsive design - stack buttons on mobile */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .search-box {
+                grid-template-columns: 1fr;
+            }
+
+            .listings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .listing-actions {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        /* Ensure consistent card heights */
+        @media (min-width: 768px) {
+            .listing-card {
+                min-height: 500px;
+            }
+        }
+        /* ===== BOOKING MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .close {
+            color: white;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close:hover,
+        .close:focus {
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .service-name-display {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .addon-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .addon-checkbox:hover {
+            background: #e9ecef;
+        }
+        
+        .addon-checkbox input[type="checkbox"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .addon-checkbox label {
+            flex: 1;
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .addon-price {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .price-estimate-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+        
+        .price-estimate-box strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .price-estimate-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn-cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .modal-btn-cancel:hover {
+            background: #d1d5db;
+        }
+        
+        .modal-btn-submit {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .modal-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .modal-btn-submit:disabled {
+            background: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Service Listings</h1>
+            <div class="header-actions">
+                <div class="user-info" id="userInfo">
+                    <div class="notification-icon">
+                        <a href="notifications.html" class="header-button">
+                            🔔 Notifications
+                            <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+                        </a>
+                    </div>
+                    <div class="header-button" id="currentUserName" onclick="userNameClicked()"></div>
+                    <button class="header-button" onclick="signOut()">Sign Out</button>
+                </div>
+                <a href="messages.html" class="header-button">Messages</a>
+                <a href="sign_in.html" class="header-button" id="signInBtn">Sign In</a>
+                <a href="talent_market.html" class="header-button">Browse Talent</a>
+                <a href="create_listings.html" class="header-button" id="createListingBtn" style="background: #10b981; display: none;">
+                    Create Listings
+                </a>
+                <a href="index.html" class="header-button">Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="employer-only-notice" id="employerNotice">
+            ⚠️ <strong>Booking Services:</strong> Only employers can book services from freelancers. Please sign in as an employer to send booking requests.
+        </div>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchTitle" placeholder="Search service titles...">
+                <input type="text" id="searchFreelancer" placeholder="Search by freelancer name...">
+                <select id="sortBy">
+                    <option value="">Sort by</option>
+                    <option value="price_low">Price: Low to High</option>
+                    <option value="price_high">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                </select>
+                <div style="display: flex; gap: 10px;">
+                    <button class="search-button" onclick="loadListings()">Search</button>
+                    <button class="clear-button" onclick="clearFilters()">Clear</button>
+                </div>
+            </div>
+
+            <div class="tags-section">
+                <h3 style="margin-bottom: 15px;">Filter by Tags:</h3>
+                <div class="tags-container" id="tagContainer">
+                    <!-- Tags will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="listings-grid" id="listingsGrid">
+            <div class="no-results">
+                <div class="no-results-icon">⏳</div>
+                <div class="no-results-text">Loading services...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        let allListings = [];
+        let allTags = [];
+        let selectedTags = new Set();
+
+        // Authentication functions embedded directly
+        function getCurrentUser() {
+            const evaluatorId = localStorage.getItem('evaluatorId');
+            const evaluatorName = localStorage.getItem('evaluatorName');
+            const evaluatorCompany = localStorage.getItem('evaluatorCompany');
+
+            const jobSeekerId = localStorage.getItem('jobSeekerId');
+            const jobSeekerName = localStorage.getItem('jobSeekerName');
+
+            if (evaluatorId && evaluatorName) {
+                return {
+                    id: evaluatorId,
+                    name: evaluatorName,
+                    company: evaluatorCompany,
+                    role: 'employer',
+                    roleKey: 'evaluator',
+                    email: localStorage.getItem('evaluatorEmail')
+                };
+            } else if (jobSeekerId && jobSeekerName) {
+                return {
+                    id: jobSeekerId,
+                    name: jobSeekerName,
+                    role: 'freelancer',
+                    roleKey: 'job_seeker',
+                    email: localStorage.getItem('jobSeekerEmail')
+                };
+            }
+            
+            return null;
+        }
+
+        function isEmployer() {
+            const user = getCurrentUser();
+            return user && user.role === 'employer';
+        }
+
+        function canBookServices() {
+            return isEmployer();
+        }
+
+        function signOut() {
+            // Clear all authentication data
+            localStorage.removeItem('evaluatorId');
+            localStorage.removeItem('evaluatorName');
+            localStorage.removeItem('evaluatorEmail');
+            localStorage.removeItem('evaluatorCompany');
+            localStorage.removeItem('jobSeekerId');
+            localStorage.removeItem('jobSeekerName');
+            localStorage.removeItem('jobSeekerEmail');
+            localStorage.removeItem('freelancerId');
+            localStorage.removeItem('freelancerName');
+            localStorage.removeItem('freelancerEmail');
+            
+            window.location.href = 'index.html';
+        }
+
+        function updateUserHeader() {
+            const user = getCurrentUser();
+            const userInfo = document.getElementById('userInfo');
+            const currentUserNameEl = document.getElementById('currentUserName');
+            const signInBtn = document.getElementById('signInBtn');
+            const createListingBtn = document.getElementById('createListingBtn');
+            const employerNotice = document.getElementById('employerNotice');
+        
+            if (user) {
+                userInfo.classList.add('active');
+                userInfo.style.display = 'flex';
+                
+                const displayText = user.role === 'employer' && user.company
+                    ? `${user.name} (${user.company})`
+                    : user.name;
+                currentUserNameEl.textContent = `${displayText} [${user.role === 'employer' ? 'Employer' : 'Freelancer'}]`;
+                
+                signInBtn.style.display = 'none';
+                
+                // Show Create Listing button ONLY for freelancers
+                if (user.role === 'freelancer') {
+                    createListingBtn.style.display = 'inline-block';
+                } else {
+                    createListingBtn.style.display = 'none';
+                }
+                
+                // Hide employer notice if signed in
+                if (employerNotice) {
+                    employerNotice.style.display = user.role === 'employer' ? 'none' : 'block';
+                }
+            } else {
+                userInfo.classList.remove('active');
+                userInfo.style.display = 'none';
+                signInBtn.style.display = 'inline-block';
+                createListingBtn.style.display = 'none';
+                
+                if (employerNotice) {
+                    employerNotice.style.display = 'block';
+                }
+            }
+        }
+
+        // Initialize page
+        function init() {
+            updateUserHeader();
+            checkUserPermissions();
+            loadListings();
+            loadNotificationCount();
+        }
+
+        // Check user permissions and show appropriate notices
+        function checkUserPermissions() {
+            const user = getCurrentUser();
+            const employerNotice = document.getElementById('employerNotice');
+            
+            if (user && !canBookServices()) {
+                employerNotice.style.display = 'block';
+            }
+        }
+
+        // Handle user name click - redirect based on role
+        function userNameClicked() {
+            const user = getCurrentUser();
+            if (!user) {
+                window.location.href = 'sign_in.html';
+                return;
+            }
+        
+            // Both roles go to unified booking dashboard
+            window.location.href = 'booking_dashboard.html';
+        }
+
+        // Load all listings
+        async function loadListings() {
+            try {
+                const response = await fetch(`${API_BASE}/api/listings/all`);
+                
+                if (response.ok) {
+                    allListings = await response.json();
+                    
+                    // Extract all unique tags
+                    const tagSet = new Set();
+                    allListings.forEach(listing => {
+                        if (listing.tags) {
+                            listing.tags.forEach(tag => tagSet.add(tag));
+                        }
+                    });
+                    allTags = Array.from(tagSet);
+                    
+                    renderTags();
+                    filterAndRenderListings();
+                } else {
+                    console.error('Failed to load listings');
+                    showNoResults('Failed to load listings. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error loading listings:', error);
+                showNoResults('Error loading listings. Please check your connection.');
+            }
+        }
+
+        // Render tags for filtering
+        function renderTags() {
+            const container = document.getElementById('tagContainer');
+            container.innerHTML = allTags.map(tag => 
+                `<div class="tag" data-tag="${tag}" onclick="toggleTag('${tag}')">${tag}</div>`
+            ).join('');
+        }
+
+        // Toggle tag selection
+        function toggleTag(tag) {
+            if (selectedTags.has(tag)) {
+                selectedTags.delete(tag);
+            } else {
+                selectedTags.add(tag);
+            }
+            
+            // Update tag appearance
+            document.querySelectorAll('.tag').forEach(tagEl => {
+                if (tagEl.dataset.tag === tag) {
+                    tagEl.classList.toggle('active', selectedTags.has(tag));
+                }
+            });
+            
+            filterAndRenderListings();
+        }
+
+        // Filter and render listings
+        function filterAndRenderListings() {
+            let filtered = [...allListings];
+            
+            // Apply filters
+            const titleSearch = document.getElementById('searchTitle').value.toLowerCase();
+            const freelancerSearch = document.getElementById('searchFreelancer').value.toLowerCase();
+            const sortBy = document.getElementById('sortBy').value;
+            
+            if (titleSearch) {
+                filtered = filtered.filter(listing => 
+                    listing.title.toLowerCase().includes(titleSearch)
+                );
+            }
+            
+            if (freelancerSearch) {
+                filtered = filtered.filter(listing => 
+                    listing.freelancer_name.toLowerCase().includes(freelancerSearch)
+                );
+            }
+            
+            if (selectedTags.size > 0) {
+                filtered = filtered.filter(listing => 
+                    listing.tags && listing.tags.some(tag => selectedTags.has(tag))
+                );
+            }
+            
+            // Apply sorting
+            switch (sortBy) {
+                case 'price_low':
+                    filtered.sort((a, b) => a.base_price - b.base_price);
+                    break;
+                case 'price_high':
+                    filtered.sort((a, b) => b.base_price - a.base_price);
+                    break;
+                case 'newest':
+                    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    break;
+            }
+            
+            renderListings(filtered);
+        }
+
+        // Render listings
+        function renderListings(listings) {
+            const grid = document.getElementById('listingsGrid');
+            
+            if (listings.length === 0) {
+                showNoResults('No listings found matching your criteria');
+                return;
+            }
+
+            grid.innerHTML = listings.map(listing => createListingCard(listing)).join('');
+        }
+
+        // Create listing card HTML
+        function createListingCard(listing) {
+            const user = getCurrentUser();
+            const canBook = user && canBookServices();
+            
+            return `
+                <div class="listing-card">
+                    <div class="listing-header">
+                        <div class="listing-title">${listing.title}</div>
+                        <div class="listing-freelancer">${listing.freelancer_name}</div>
+                    </div>
+                    
+                    <div class="listing-description">${listing.description}</div>
+                    
+                    <div class="listing-pricing">
+                        <div class="base-price">$${listing.base_price.toFixed(2)}</div>
+                        ${listing.addons && listing.addons.length > 0 ? `
+                            <div class="addons-section">
+                                <div class="addons-title">Available Add-ons:</div>
+                                <div class="addon-list">
+                                    ${listing.addons.map(addon => `
+                                        <div class="addon-item-display">
+                                            <span>${addon.name}</span>
+                                            <span class="addon-price">+$${addon.price.toFixed(2)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="listing-tags">
+                        ${listing.tags.map(tag => `<span class="listing-tag">${tag}</span>`).join('')}
+                    </div>
+
+                    <div class="listing-actions">
+                        <button class="book-btn" ${!canBook ? 'disabled title="Sign in as employer to book services"' : ''} 
+                                onclick="${canBook ? `bookService(${listing.id})` : 'requireEmployerLogin()'}">
+                            ${canBook ? 'Book Now' : 'Sign In to Book'}
+                        </button>
+                        <button class="message-btn" onclick="messageFreelancer(${listing.freelancer_id}, '${listing.freelancer_name.replace(/'/g, "\\'")}')">
+                            Message
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show no results
+        function showNoResults(message) {
+            document.getElementById('listingsGrid').innerHTML = `
+                <div class="no-results">
+                    <div class="no-results-icon"></div>
+                    <div class="no-results-text">${message}</div>
+                </div>
+            `;
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('searchTitle').value = '';
+            document.getElementById('searchFreelancer').value = '';
+            document.getElementById('sortBy').value = '';
+            selectedTags.clear();
+            
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            
+            filterAndRenderListings();
+        }
+
+        // Require employer login for booking
+        function requireEmployerLogin() {
+            alert('Please sign in as an employer to book services from freelancers.');
+            window.location.href = 'sign_in.html';
+        }
+
+        // Book service function
+        function bookService(listingId) {
+            const user = getCurrentUser();
+            if (!user) {
+                alert('Please sign in to book services');
+                window.location.href = 'sign_in.html';
+                return;
+            }
+            
+            if (!canBookServices()) {
+                requireEmployerLogin();
+                return;
+            }
+            
+            // Find the listing
+            const listing = allListings.find(l => l.id === listingId);
+            if (!listing) {
+                alert('Listing not found');
+                return;
+            }
+            
+            currentBookingListing = listing;
+            
+            // Populate modal
+            document.getElementById('bookingListingId').value = listingId;
+            document.getElementById('bookingServiceName').textContent = listing.title + ' by ' + listing.freelancer_name;
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').min = today;
+            
+            // Reset form
+            document.getElementById('bookingForm').reset();
+            document.getElementById('bookingListingId').value = listingId;
+            
+            // Show addons if available
+            const addonsSection = document.getElementById('bookingAddonsSection');
+            if (listing.addons && listing.addons.length > 0) {
+                addonsSection.innerHTML = `
+                    <div style="margin-bottom: 10px; font-weight: 600; color: #333;">Available Add-ons:</div>
+                    ${listing.addons.map((addon, index) => `
+                        <div class="addon-checkbox">
+                            <input type="checkbox" id="addon${index}" value="${index}" onchange="updateBookingPrice()">
+                            <label for="addon${index}">
+                                <span>${addon.name}</span>
+                                <span class="addon-price">+$${addon.price.toFixed(2)}</span>
+                            </label>
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                addonsSection.innerHTML = '';
+            }
+            
+            updateBookingPrice();
+            
+            // Show modal
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+            currentBookingListing = null;
+        }
+        
+        function updateBookingPrice() {
+            if (!currentBookingListing) return;
+            
+            let total = currentBookingListing.base_price;
+            
+            // Add selected addons
+            if (currentBookingListing.addons) {
+                currentBookingListing.addons.forEach((addon, index) => {
+                    const checkbox = document.getElementById(`addon${index}`);
+                    if (checkbox && checkbox.checked) {
+                        total += addon.price;
+                    }
+                });
+            }
+            
+            document.getElementById('bookingPriceEstimate').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Message freelancer function
+        function messageFreelancer(freelancerId, freelancerName) {
+            const user = getCurrentUser();
+            
+            if (!user) {
+                alert('Please sign in to start a conversation');
+                window.location.href = 'sign_in.html';
+                return;
+            }
+            
+            if (user.role === 'freelancer') {
+                window.location.href = `messages.html?user_role=job_seeker&user_id=${user.id}&freelancer_id=${freelancerId}`;
+            } else {
+                window.location.href = `messages.html?user_role=evaluator&user_id=${user.id}&freelancer_id=${freelancerId}`;
+            }
+        }
+
+        // Load notification count
+        async function loadNotificationCount() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/notifications/unread-count?user_role=${user.roleKey}&user_id=${user.id}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const badge = document.getElementById('notificationBadge');
+                    
+                    if (data.unread_count > 0) {
+                        badge.textContent = data.unread_count;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading notification count:', error);
+            }
+        }
+        // Handle booking form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookingForm = document.getElementById('bookingForm');
+            if (bookingForm) {
+                bookingForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const user = getCurrentUser();
+                    if (!user) {
+                        alert('Please sign in to book services');
+                        return;
+                    }
+                    
+                    const listingId = document.getElementById('bookingListingId').value;
+                    const date = document.getElementById('bookingDate').value;
+                    const time = document.getElementById('bookingTime').value;
+                    const location = document.getElementById('bookingLocation').value;
+                    const description = document.getElementById('bookingDescription').value;
+                    const budget = document.getElementById('bookingBudget').value;
+                    
+                    // Get selected addons
+                    const selectedAddons = [];
+                    if (currentBookingListing && currentBookingListing.addons) {
+                        currentBookingListing.addons.forEach((addon, index) => {
+                            const checkbox = document.getElementById(`addon${index}`);
+                            if (checkbox && checkbox.checked) {
+                                selectedAddons.push({
+                                    name: addon.name,
+                                    price: addon.price
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Validate required fields
+                    if (!date) {
+                        alert('❌ Please select a date');
+                        return;
+                    }
+                    
+                    if (!time) {
+                        alert('❌ Please select a time');
+                        return;
+                    }
+
+                    if (!location || location.trim() === '') {
+                        alert('❌ Please enter a location');
+                        return;
+}
+
+                    const bookingData = {
+                        listing_id: parseInt(listingId),
+                        requested_date: date,
+                        requested_time: time,  // Now always required
+                        location: location.trim(),
+                        description: description && description.trim() ? description.trim() : null,
+                        selected_addons: selectedAddons,
+                        client_budget: budget && parseFloat(budget) > 0 ? parseFloat(budget) : null
+                    };
+
+                    // Validate booking data
+                    if (!bookingData.listing_id || bookingData.listing_id <= 0) {
+                        alert('❌ Invalid listing ID');
+                        return;
+                    }
+                    
+                    if (!bookingData.location || bookingData.location === '') {
+                        alert('❌ Location is required');
+                        return;
+                    }
+                    
+                    try {
+                        const submitBtn = e.target.querySelector('.modal-btn-submit');
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Sending...';
+                        
+                        const response = await fetch(
+                            `${API_BASE}/api/bookings?client_role=${user.roleKey}&client_id=${user.id}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(bookingData)
+                            }
+                        );
+                        
+                        if (response.ok) {
+                            alert('✅ Booking request sent successfully!');
+                            closeBookingModal();
+                            window.location.href = 'booking_dashboard.html';
+                        } else {
+                            const error = await response.json();
+                            console.error('Booking error:', error);
+                            
+                            // Better error message handling
+                            let errorMessage = 'Failed to send booking request';
+                            if (error.detail) {
+                                if (Array.isArray(error.detail)) {
+                                    // Validation errors from FastAPI
+                                    errorMessage = error.detail.map(e => `${e.loc.join('.')}: ${e.msg}`).join('\n');
+                                } else if (typeof error.detail === 'string') {
+                                    errorMessage = error.detail;
+                                }
+                            }
+    
+                            alert('❌ Error:\n' + errorMessage);
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Send Booking Request';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('❌ Error sending booking request. Please try again.');
+                        const submitBtn = e.target.querySelector('.modal-btn-submit');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Send Booking Request';
+                    }
+                });
+            }
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('bookingModal');
+                if (event.target === modal) {
+                    closeBookingModal();
+                }
+            });
+        });
+        // Initialize on page load
+        init();
+
+        // Refresh notification count every 30 seconds
+        setInterval(loadNotificationCount, 30000);
+    </script>
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeBookingModal()">&times;</span>
+                <h2>Book Service</h2>
+            </div>
+            <div class="modal-body">
+                <div id="bookingServiceName" class="service-name-display"></div>
+                
+                <form id="bookingForm">
+                    <input type="hidden" id="bookingListingId">
+                    
+                    <div class="form-group">
+                        <label for="bookingDate">Requested Date *</label>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookingTime">Requested Time *</label>
+                        <input type="time" id="bookingTime" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookingLocation">Location *</label>
+                        <input type="text" id="bookingLocation" required placeholder="Enter service location">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bookingDescription">Additional Details</label>
+                        <textarea id="bookingDescription" rows="3" placeholder="Any special requests or requirements"></textarea>
+                    </div>
+                    
+                    <div id="bookingAddonsSection"></div>
+                    
+                    <div class="form-group">
+                        <label for="bookingBudget">Your Budget</label>
+                        <input type="number" id="bookingBudget" min="0" step="0.01" placeholder="Enter your budget">
+                    </div>
+                    
+                    <div class="price-estimate-box">
+                        <strong>Estimated Price:</strong>
+                        <div id="bookingPriceEstimate" class="price-estimate-value">$0.00</div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn modal-btn-cancel" onclick="closeBookingModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="modal-btn modal-btn-submit">
+                            Send Booking Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

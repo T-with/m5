@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Talent Market</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 30px;
+            font-size: 16px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+        
+        .back-button:hover {
+            opacity: 1;
+        }
+        
+        .back-button:before {
+            content: "←";
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .form-header h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .role-selector {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 4px;
+        }
+        
+        .role-option {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .role-option.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .role-option:hover {
+            color: #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #ef4444;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-help {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .password-toggle button {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .create-account-link {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .create-account-link p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .create-account-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .create-account-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .success-message, .error-message {
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+            display: none;
+        }
+        
+        .success-message {
+            background: #10b981;
+            color: white;
+        }
+        
+        .error-message {
+            background: #ef4444;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+            }
+            
+            .form-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .form-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">Back to Home</a>
+        
+        <div class="form-card">
+            <div class="form-header">
+                <h1>Sign In</h1>
+                <p>Welcome back! Please sign in to your account</p>
+            </div>
+            
+            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+            
+            <div class="role-selector">
+                <div class="role-option active" data-role="freelancer" onclick="selectRole('freelancer')">
+                    Freelancer
+                </div>
+                <div class="role-option" data-role="employer" onclick="selectRole('employer')">
+                    Employer
+                </div>
+            </div>
+            
+            <form id="signInForm">
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <div class="password-toggle">
+                        <input type="password" id="password" name="password" required placeholder="Enter your password">
+                        <button type="button" onclick="togglePassword()">👁️</button>
+                    </div>
+                    <div class="form-help" id="passwordHelp">Enter your account password</div>
+                </div>
+                
+                <button type="submit" class="submit-button">Sign In</button>
+            </form>
+            
+            <div class="create-account-link">
+                <p>Don't have an account?</p>
+                <div id="registerLinks">
+                    <a href="job_seeker_register.html" id="freelancerRegisterLink">Register as Freelancer</a>
+                    <span style="margin: 0 10px;">or</span>
+                    <a href="evaluator_register.html" id="employerRegisterLink">Register as Employer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+
+            const API_BASE = '';
+
+    // CHECK IF ALREADY LOGGED IN - Redirect if so
+            function checkExistingSession() {
+            // Check for freelancer session
+                const jobSeekerId = localStorage.getItem('jobSeekerId');
+                const jobSeekerName = localStorage.getItem('jobSeekerName');
+
+                if (jobSeekerId && jobSeekerName) {
+                    alert('You are already signed in as a freelancer.\n\nPlease sign out first if you want to sign in as a different account.');
+                    window.location.href = 'talent_market.html';
+                    return true;
+                }
+
+        // Check for employer session
+                const evaluatorId = localStorage.getItem('evaluatorId');
+                const evaluatorName = localStorage.getItem('evaluatorName');
+
+                if (evaluatorId && evaluatorName) {
+                    alert('You are already signed in as an employer.\n\nPlease sign out first if you want to sign in as a different account.');
+                    window.location.href = 'talent_market.html';
+                    return true;
+                }
+
+                return false;
+            }
+
+    // Run check immediately when page loads
+            if (checkExistingSession()) {
+                throw new Error('Already logged in - redirecting');
+            }
+
+            let selectedRole = 'freelancer';
+        
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // Update active role indicator
+            document.querySelectorAll('.role-option').forEach(option => {
+                option.classList.toggle('active', option.dataset.role === role);
+            });
+            
+            // Update form based on role
+            const registerLinks = document.getElementById('registerLinks');
+            
+            if (role === 'freelancer') {
+                registerLinks.innerHTML = '<a href="job_seeker_register.html">Register as Freelancer</a>';
+            } else {
+                registerLinks.innerHTML = '<a href="evaluator_register.html">Register as Employer</a>';
+            }
+        }
+        
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const button = event.target;
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                passwordField.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+        
+        function showMessage(type, text) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Hide both messages first
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Show appropriate message
+            if (type === 'success') {
+                successMsg.textContent = text;
+                successMsg.style.display = 'block';
+            } else {
+                errorMsg.textContent = text;
+                errorMsg.style.display = 'block';
+            }
+        }
+        
+        async function signInAsEmployer(email, password) {
+            try {
+                const response = await fetch(`${API_BASE}/api/evaluators/verify-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Invalid credentials');
+                }
+
+                const result = await response.json();
+                
+                // Store employer data
+                localStorage.setItem('evaluatorId', result.evaluator_id);
+                localStorage.setItem('evaluatorName', result.name);
+                localStorage.setItem('evaluatorEmail', email);
+                if (result.company) {
+                    localStorage.setItem('evaluatorCompany', result.company);
+                }
+
+                return result;
+            } catch (error) {
+                throw new Error('Sign in failed: ' + error.message);
+            }
+        }
+        
+        async function signInAsFreelancer(email, password) {
+            try {
+                // Use the password verification API endpoint
+                const response = await fetch(`${API_BASE}/api/freelancers/verify-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+        
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Invalid credentials');
+                }
+        
+                const result = await response.json();
+                
+                // Store freelancer data
+                localStorage.setItem('jobSeekerId', result.freelancer_id);
+                localStorage.setItem('jobSeekerName', result.name);
+                localStorage.setItem('jobSeekerEmail', result.email);
+        
+                // For backward compatibility
+                localStorage.setItem('freelancerId', result.freelancer_id);
+                localStorage.setItem('freelancerName', result.name);
+                localStorage.setItem('freelancerEmail', result.email);
+        
+                return result;
+            } catch (error) {
+                throw new Error('Sign in failed: ' + error.message);
+            }
+        }
+        
+        function getAppropriateRedirect() {
+            if (selectedRole === 'freelancer') {
+                return 'create_listings.html'; // Freelancer's own listings
+            } else {
+                return 'listings.html'; // Employer browses available services
+            }
+        }
+        
+        document.getElementById('signInForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showMessage('error', 'Please enter both email and password');
+                return;
+            }
+            
+            const submitButton = document.querySelector('.submit-button');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing In...';
+            
+            try {
+                let result;
+                
+                if (selectedRole === 'employer') {
+                    result = await signInAsEmployer(email, password);
+                    showMessage('success', 'Employer sign in successful! Redirecting...');
+                } else {
+                    result = await signInAsFreelancer(email, password);
+                    showMessage('success', 'Freelancer sign in successful! Redirecting...');
+                }
+                
+                // Redirect after successful sign in
+                setTimeout(() => {
+                    const redirectUrl = getAppropriateRedirect();
+                    window.location.href = redirectUrl;
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Sign in error:', error);
+                showMessage('error', error.message || 'Sign in failed. Please check your credentials.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign In';
+            }
+        });
+        
+        // Initialize form
+        selectRole('freelancer');
+    </script>
+</body>
+</html>

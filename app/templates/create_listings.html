@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Listing - Talent Market</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-name {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-container h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .addon-section {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+
+        .addon-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .addon-inputs input {
+            flex: 1;
+        }
+
+        .addon-inputs input[type="number"] {
+            width: 150px;
+        }
+
+        .add-addon-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .add-addon-btn:hover {
+            background: #059669;
+        }
+
+        .addon-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .addon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .addon-item span {
+            color: #333;
+        }
+
+        .addon-item .price {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .remove-addon-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .remove-addon-btn:hover {
+            background: #dc2626;
+        }
+
+        .tag-section {
+            margin-bottom: 25px;
+        }
+
+        .tag-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tag-input-container input {
+            flex: 1;
+        }
+
+        .add-tag-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .add-tag-btn:hover {
+            background: #7c3aed;
+        }
+
+        .tags-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-pill {
+            background: #8b5cf6;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-pill .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .tag-pill .remove-tag:hover {
+            opacity: 0.8;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            flex: 1;
+            padding: 15px;
+            background: linear-gradient(135deg, #9be7f6ff 0%, #4d52e0ff 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cancel-btn {
+            padding: 15px 30px;
+            background: #e5e7eb;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cancel-btn:hover {
+            background: #d1d5db;
+        }
+
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .listing-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .listing-card h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .listing-card .description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .price-section {
+            background: #eef2ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-section .label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .price-section .price {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .addons-section {
+            margin-bottom: 20px;
+        }
+
+        .addons-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .addon-display-item {
+            display: flex;
+            justify-content: space-between;
+            background: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tags-section {
+            margin-bottom: 20px;
+        }
+
+        .tags-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .tag-display {
+            background: #f3e8ff;
+            color: #8b5cf6;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .message-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .delete-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .empty-state h3 {
+            color: #666;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .listings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>My Services</h1>
+                <p>Manage and showcase your freelance offerings</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span class="user-name" id="userName"></span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+                <button
+                  class="create-btn"
+                  type="button"
+                  onclick="window.location.href='listings.html'">
+                  ⬅ Back to Listings
+                </button>
+                <button class="create-btn" onclick="toggleForm()">Create Listing</button>
+            </div>
+        </div>
+
+        <div id="formContainer" class="form-container">
+            <h2>New Service Listing</h2>
+            <form id="listingForm" onsubmit="submitListing(event)">
+                <div class="form-group">
+                    <label for="title">Service Title *</label>
+                    <input type="text" id="title" name="title" required placeholder="e.g., Professional Logo Design">
+              </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" required placeholder="Describe your service in detail..."></textarea>
+              </div>
+
+                <div class="form-group">
+                    <label for="basePrice">Base Price ($) *</label>
+                    <input type="number" id="basePrice" name="basePrice" step="0.01" required placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label>Add-ons</label>
+                    <div class="addon-section">
+                        <div class="addon-inputs">
+                            <input type="text" id="addonName" placeholder="Add-on name">
+                            <input type="number" id="addonPrice" step="0.01" placeholder="Price">
+                            <button type="button" class="add-addon-btn" onclick="addAddon()">Add</button>
+                      </div>
+                        <div id="addonsList" class="addon-list"></div>
+                </div>
+              </div>
+
+                <div class="form-group">
+                    <label>Tags</label>
+                    <div class="tag-section">
+                        <div class="tag-input-container">
+                            <input type="text" id="tagInput" placeholder="Add a tag" onkeypress="if(event.key==='Enter'){event.preventDefault();addTag();}">
+                            <button type="button" class="add-tag-btn" onclick="addTag()">Add Tag</button>
+                        </div>
+                        <div id="tagsDisplay" class="tags-display"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Create Listing</button>
+                    <button type="button" class="cancel-btn" onclick="toggleForm()">Cancel</button>
+                </div>
+            </form>
+              </div>
+
+        <div id="listingsContainer" class="listings-grid">
+            <div class="empty-state">
+                <h3>No listings yet</h3>
+                <p>Create your first service listing to get started!</p>
+            </div>
+          </div>
+    </div>
+
+    <script>
+        let listings = [];
+        let addons = [];
+        let tags = [];
+
+        function toggleForm() {
+            const formContainer = document.getElementById('formContainer');
+            formContainer.classList.toggle('active');
+        }
+
+        function addAddon() {
+            const nameInput = document.getElementById('addonName');
+            const priceInput = document.getElementById('addonPrice');
+            const name = nameInput.value.trim();
+            const price = parseFloat(priceInput.value);
+
+            if (name && price) {
+                addons.push({ name, price });
+                renderAddons();
+                nameInput.value = '';
+                priceInput.value = '';
+            }
+        }
+
+        function removeAddon(index) {
+            addons.splice(index, 1);
+            renderAddons();
+        }
+
+        function renderAddons() {
+            const container = document.getElementById('addonsList');
+            if (addons.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = addons.map((addon, index) => `
+                <div class="addon-item">
+                    <span>${addon.name}</span>
+                    <span class="price">$${addon.price.toFixed(2)}</span>
+                    <button type="button" class="remove-addon-btn" onclick="removeAddon(${index})">×</button>
+                  </div>
+            `).join('');
+        }
+
+        function addTag() {
+            const input = document.getElementById('tagInput');
+            const tag = input.value.trim();
+
+            if (tag && !tags.includes(tag)) {
+                tags.push(tag);
+                renderTags();
+                input.value = '';
+            }
+        }
+
+        function removeTag(index) {
+            tags.splice(index, 1);
+            renderTags();
+        }
+
+        function renderTags() {
+            const container = document.getElementById('tagsDisplay');
+            container.innerHTML = tags.map((tag, index) => `
+                <div class="tag-pill">
+                    ${tag}
+                    <span class="remove-tag" onclick="removeTag(${index})">×</span>
+                </div>
+            `).join('');
+        }
+
+        function renderListings() {
+            const container = document.getElementById('listingsContainer');
+            
+            if (listings.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No listings yet</h3>
+                        <p>Create your first service listing to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = listings.map(listing => `
+                <div class="listing-card">
+                    <h3>${listing.title}</h3>
+                    <p class="description">${listing.description}</p>
+                    
+                    <div class="price-section">
+                        <span class="label">Base Price</span>
+                        <span class="price">$${listing.basePrice.toFixed(2)}</span>
+                    </div>
+
+                    ${listing.addons.length > 0 ? `
+                        <div class="addons-section">
+                            <h4>Available Add-ons</h4>
+                            ${listing.addons.map(addon => `
+                                <div class="addon-display-item">
+                                    <span>${addon.name}</span>
+                                    <span class="price">+$${addon.price.toFixed(2)}</span>
+              </div>
+                            `).join('')}
+            </div>
+                    ` : ''}
+
+                    ${listing.tags.length > 0 ? `
+                        <div class="tags-section">
+                            <h4>Tags</h4>
+                            ${listing.tags.map(tag => `<span class="tag-display">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+
+                    <button class="delete-btn" onclick="deleteListing(${listing.id})">Delete Listing</button>
+                </div>
+            `).join('');
+        }
+
+        async function submitListing(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const basePrice = parseFloat(document.getElementById('basePrice').value);
+
+            // Get freelancer ID from localStorage - require sign-in
+            const freelancerId = localStorage.getItem('freelancerId') || localStorage.getItem('jobSeekerId');
+            
+            if (!freelancerId) {
+                alert('Please sign in to create a listing. Redirecting to sign in page...');
+                window.location.href = 'sign_in.html';
+                return;
+            }
+
+            // Ensure tags is an array (not empty)
+            const tagsArray = Array.isArray(tags) && tags.length > 0 ? tags : [];
+            
+            // Ensure addons is an array with proper structure
+            const addonsArray = Array.isArray(addons) ? addons.map(addon => ({
+                name: addon.name,
+                price: parseFloat(addon.price)
+            })) : [];
+            
+            const listingData = {
+                title: title.trim(),
+                description: description.trim(),
+                base_price: parseFloat(basePrice),
+                tags: tagsArray,
+                addons: addonsArray
+            };
+
+            try {
+                console.log('Submitting listing:', listingData);
+                console.log('Freelancer ID:', freelancerId);
+                
+                const response = await fetch(`/api/freelancers/${freelancerId}/listings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(listingData)
+                });
+
+                console.log('Response status:', response.status);
+                const responseData = await response.json();
+                console.log('Response data:', responseData);
+
+                if (response.ok) {
+                    alert('Listing created successfully!');
+                    
+                    // Add to local listings array
+                    listings.push({
+                        id: responseData.listing_id,
+                        title,
+                        description,
+                        basePrice,
+                        addons: [...addons],
+                        tags: [...tags]
+                    });
+
+                    // Reset form
+                    document.getElementById('listingForm').reset();
+                    addons = [];
+                    tags = [];
+                    renderAddons();
+                    renderTags();
+                    toggleForm();
+                    renderListings();
+                } else {
+                    const errorMsg = responseData.detail || responseData.message || 'Unknown error';
+                    console.error('API Error:', errorMsg);
+                    alert('Error creating listing: ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating listing: ' + error.message);
+            }
+        }
+
+        function openMessage(listingId) {
+            alert('Message functionality would open here. This would integrate with your messaging system.');
+        }
+
+        // Delete a listing
+        async function deleteListing(listingId) {
+            if (!confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/listings/${listingId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Listing deleted successfully!');
+                    // Remove from local array
+                    listings = listings.filter(l => l.id !== listingId);
+                    renderListings();
+                } else {
+                    const error = await response.json();
+                    alert('Error deleting listing: ' + (error.detail || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error deleting listing:', error);
+                alert('Error deleting listing. Please try again.');
+            }
+        }
+
+        // Check if user is signed in and display user info
+        function checkAuth() {
+            const freelancerId = localStorage.getItem('freelancerId') || localStorage.getItem('jobSeekerId');
+            const freelancerName = localStorage.getItem('freelancerName') || localStorage.getItem('jobSeekerName');
+            
+            if (!freelancerId) {
+                alert('Please sign in to access your listings. Redirecting to sign in page...');
+                window.location.href = 'sign_in.html';
+                return false;
+            }
+
+            // Display user info
+            if (freelancerName) {
+                document.getElementById('userName').textContent = `👤 ${freelancerName}`;
+                document.getElementById('userInfo').style.display = 'flex';
+            }
+            
+            return true;
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('freelancerId');
+                localStorage.removeItem('freelancerName');
+                localStorage.removeItem('freelancerEmail');
+                localStorage.removeItem('jobSeekerId');
+                localStorage.removeItem('jobSeekerName');
+                localStorage.removeItem('jobSeekerEmail');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Load existing listings on page load
+        async function loadListings() {
+            // Check authentication first
+            if (!checkAuth()) {
+                return;
+            }
+
+            const freelancerId = localStorage.getItem('freelancerId') || localStorage.getItem('jobSeekerId');
+            
+            try {
+                const response = await fetch('/api/listings');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Filter to show only current user's listings
+                    listings = data
+                        .filter(l => l.freelancer_id == freelancerId)
+                        .map(l => ({
+                            id: l.id,
+                            title: l.title,
+                            description: l.description,
+                            basePrice: l.base_price,
+                            addons: l.addons || [],
+                            tags: l.tags || []
+                        }));
+                    renderListings();
+                }
+            } catch (error) {
+                console.error('Error loading listings:', error);
+            }
+        }
+
+        // Initialize - check auth and load listings
+        if (checkAuth()) {
+            loadListings();
+        }
+    </script>
+</body>
+</html>
